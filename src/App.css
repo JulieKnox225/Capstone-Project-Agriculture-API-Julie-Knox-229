@@ -1,3 +1,17 @@
+body {
+    font-family: 'Chivo Mono', monospace;
+    color: #2e1400;
+}
+
+a:visited, a:link, a:active {
+    text-decoration: none;
+    color: #2e1400;
+}
+
+a:hover {
+    text-decoration: #2e1400;
+}
+
 nav ul {
     display: flex;
     background-color: #fcbf49;
@@ -16,8 +30,12 @@ nav ul li {
 }
 
 .PostSnippet--container {
-    outline: solid red;
+    /* outline: solid red; */
+
     width: 75%;
+    margin: auto;
+
+    background-color: #fcfca1;
 }
 
 .PostSnippet--container > h4 {
