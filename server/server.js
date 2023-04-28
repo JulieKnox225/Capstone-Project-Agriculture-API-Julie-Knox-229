@@ -9,7 +9,7 @@ const PORT = process.env.PORT;
 app.use(cors());
 app.use(express.json());
 app.use(db);
-// app.use('/', require('./routes/auth/authentication'));
+app.use('/', require('./routes/auth/authentication'));
 app.use('/', require('./routes/api/plants'));
 
 app.listen(PORT, () => console.log(`Server started on Port ${PORT}`));
