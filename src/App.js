@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SearchPage from './pages/Search.page';
 import HomePage from './pages/Home.page';
 import ProfilePage from './pages/Profile.page';
+import AddEntryPage from './pages/AddEntry.page';
 import './App.css';
 
 function App() {
@@ -17,6 +18,9 @@ function App() {
                 <Link to='/'>Home</Link>
               </li>
               <li>
+                <Link to='/add'>Add</Link>
+              </li>
+              <li>
                 <Link to='/search'>Search</Link>
               </li>
             </ul>
@@ -24,6 +28,7 @@ function App() {
           <Routes>
             <Route path='/' element={<HomePage/>}/>
             <Route path='/profile' element={<ProfilePage/>}/>
+            <Route path='/add' element={<AddEntryPage/>}/>
             <Route path='/search' element={<SearchPage/>}/>
           </Routes>
         </div>
