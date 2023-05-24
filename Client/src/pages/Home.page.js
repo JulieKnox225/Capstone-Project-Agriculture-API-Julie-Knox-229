@@ -6,37 +6,28 @@ const fetchApi = () => {
     return axios.get('http://localhost:5000/plants');
 }
 
-function HomePage() {
+function HomePage({ token }) {
     const { data, isLoading, isError, error } = useQuery('getPlants', fetchApi, {enabled: true});
-
-
+    console.log(data)
 
     return ( 
         <>
             { isLoading && <h2>Loading...</h2>}
             { isError && <h2>{error.message}</h2>}
-            { data && <h2>{data.data}</h2>}
-            <PostSnippet 
-                plantName='Sunflower'
-                plantTempRange='70-90f'
-                plantZone='9b'
-                plantSunReq='Full sun'
-                plantDescription='Pretty :)'
-            />
-            <PostSnippet 
-                plantName='Daisies'
-                plantTempRange='60-80f'
-                plantZone='8b'
-                plantSunReq='Partial Sun'
-                plantDescription='Cute :)'
-            />
-            <PostSnippet 
-                plantName='Kale Bloom'
-                plantTempRange='70-80f'
-                plantZone='9b'
-                plantSunReq='Partial'
-                plantDescription="Yeah it's real"
-            />
+            { data && 
+                data.data.map(item => {
+                    return (
+                        <PostSnippet 
+                            key={item.id}
+                            plantName={item.name}
+                            plantTempRange={`${item.sow_temp_range}f`}
+                            plantZone={item.planting_zone}
+                            plantSunReq={`${item.sun_req} sun`}
+                            plantDescription='To be added...'
+                        />
+                    );
+                })
+            }
         </>
      );
 }

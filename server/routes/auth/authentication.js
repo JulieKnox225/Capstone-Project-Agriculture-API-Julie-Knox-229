@@ -37,20 +37,20 @@ router.post('/login', async (req, res) => {
             }
         );
 
-        const { password: hashedPassword } = result[0][0];
-
-        if(hashedPassword == '') {
-            throw new Error('No user found!');
+        if(result[0].length === 0) {
+            return res.status(400).json({success: false, message: 'No user found!', data: null});
         }
+
+        const { password: hashedPassword } = result[0][0];
 
         if(await bcrypt.compare(sentPassword, hashedPassword)) {
             const accessToken = jwt.sign(name, process.env.ACCESS_TOKEN_SECRET);
-
-            res.status(200).send({success: true, message: 'Logged In!', accessToken, data: null});
+            res.status(200).send(accessToken);
+            //{success: true, message: 'Logged In!', accessToken, data: null}
         }
 
     } catch (err) {
-        res.status(400).send({success: false, message: err, data: null});
+        res.status(400).json({success: false, message: err, data: null});
     }
 });
 

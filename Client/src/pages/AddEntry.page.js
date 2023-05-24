@@ -8,12 +8,14 @@ function AddEntryPage() {
         {
             name: '', 
             nickname: '', 
-            tempRangeHigh: '', 
-            tempRangeLow: '', 
+            monthsToPlant: '', 
+            sunReq: '',
+            plantingZone: '', 
             sowTemp: '', 
             fertilizerNPK: '', 
             companionPlantId: '', 
-            description: ''
+            description: '',
+            avoidPlantId: ''
         }
     );
 
@@ -21,15 +23,7 @@ function AddEntryPage() {
     
     const fetchApi = (input) => {
         setEnabled(false);
-        return fetch('http://localhost:5000/plants',
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(input)
-            }
-        )
+        return axios.post('http://localhost:5000/plants', input);
     }
 
     const { data, isError, isLoading, error } = useQuery('addEntry', () => fetchApi(input),
@@ -50,13 +44,28 @@ function AddEntryPage() {
 
     return ( 
         <div>
-            { data && <h2>{data.data}</h2>}
-            { isError && <h2>{error.message}</h2>}
             { isLoading && <h2>Loading...</h2>}
+            { isError && <h2>{error.response.data.message.message}</h2>}
+            {/* { data && <h2>{data.data}</h2>} */}
             <form onSubmit={(e) => {
                     e.preventDefault();
-                    console.log(input)
+                    //Unsure if this will work - must try again
                     setEnabled(true);
+                    // if(!isLoading) {
+                    //     setInput(
+                    //         {
+                    //             name: '', 
+                    //             nickname: '', 
+                    //             monthsToPlant: '', 
+                    //             plantingZone: '', 
+                    //             sowTemp: '', 
+                    //             fertilizerNPK: '', 
+                    //             companionPlantId: '', 
+                    //             description: '',
+                    //             avoidPlantId: ''
+                    //         }
+                    //     );
+                    // }
                 }}
             >
                 <input
@@ -75,16 +84,23 @@ function AddEntryPage() {
                 ></input> 
                 <input
                     type="text" 
-                    placeholder="Temp Range High here"
-                    name='tempRangeHigh'
-                    value={input.tempRangeHigh}
+                    placeholder="Months here"
+                    name='monthsToPlant'
+                    value={input.monthsToPlant}
                     onChange={handleChange}
                 ></input> 
                 <input
                     type="text" 
-                    placeholder="Temp Range Low here"
-                    name='tempRangeLow'
-                    value={input.tempRangeLow}
+                    placeholder="Sun Required here"
+                    name='sunReq'
+                    value={input.sunReq}
+                    onChange={handleChange}
+                ></input> 
+                <input
+                    type="text" 
+                    placeholder="Planting Zone here"
+                    name='plantingZone'
+                    value={input.plantingZone}
                     onChange={handleChange}
                 ></input> 
                 <input
@@ -103,7 +119,7 @@ function AddEntryPage() {
                 ></input> 
                 <input
                     type="text" 
-                    placeholder="Companion PLant id here"
+                    placeholder="Companion Plant id here"
                     name='companionPlantId'
                     value={input.companionPlantId}
                     onChange={handleChange}
@@ -113,6 +129,13 @@ function AddEntryPage() {
                     placeholder="Description here"
                     name='description'
                     value={input.description}
+                    onChange={handleChange}
+                ></input> 
+                <input
+                    type="text" 
+                    placeholder="Plants to avoid here"
+                    name='avoidPlantId'
+                    value={input.avoidPlantId}
                     onChange={handleChange}
                 ></input> 
                 <button>Add</button>
