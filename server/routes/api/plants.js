@@ -4,7 +4,7 @@ const authenticateToken = require('../../middleware/authenticateMiddle');
 
 router.use(express.json());
 
-router.get('/plants', async (req, res) => {
+router.get('/plants', authenticateToken, async (req, res) => {
     try {
         const { search } = req.query;
         let result = [];

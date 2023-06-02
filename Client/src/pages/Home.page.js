@@ -8,12 +8,11 @@ const fetchApi = () => {
 
 function HomePage({ token }) {
     const { data, isLoading, isError, error } = useQuery('getPlants', fetchApi, {enabled: true});
-    console.log(data)
 
     return ( 
         <>
             { isLoading && <h2>Loading...</h2>}
-            { isError && <h2>{error.message}</h2>}
+            { isError && <h2>{error.response.data.message}</h2>}
             { data && 
                 data.data.map(item => {
                     return (

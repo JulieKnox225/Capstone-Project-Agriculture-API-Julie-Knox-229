@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
 
 function LoginPage({ token, setToken }) {
@@ -16,10 +16,15 @@ function LoginPage({ token, setToken }) {
 
     const fetchLogin = (param) => {
         setEnabled(false);
-        return axios.post('http://localhost:5000/login', param);
+        return axios.post('http://localhost:5000/login', param, {withCredentials: true});
     }
 
     const { data, isError, error, isLoading } = useQuery('login', () => fetchLogin(input), { enabled });
+    console.log(data)
+    if(data) {
+        axios.defaults.headers.common['authorization'] = `Bearer ${data.data.data}`;
+        return <Navigate to={'/profile'} />;
+    }
         
     function handleChange(e) {
         const { name, value } = e.target;
@@ -39,7 +44,7 @@ function LoginPage({ token, setToken }) {
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     setEnabled(true);
-                    }}
+                }}
                 >
                     <input
                         type="text"

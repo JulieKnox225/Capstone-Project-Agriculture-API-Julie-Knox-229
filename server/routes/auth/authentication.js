@@ -44,9 +44,20 @@ router.post('/login', async (req, res) => {
         const { password: hashedPassword } = result[0][0];
 
         if(await bcrypt.compare(sentPassword, hashedPassword)) {
-            const accessToken = jwt.sign(name, process.env.ACCESS_TOKEN_SECRET);
-            res.status(200).send(accessToken);
-            //{success: true, message: 'Logged In!', accessToken, data: null}
+            const accessToken = jwt.sign({name}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30s'});
+            const refreshToken = jwt.sign({name}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1w'});
+
+            res.cookie('accessToken', accessToken, {
+                httpOnly: true,
+                maxAge: 24 * 60 * 60 * 1000 //1 day
+            });
+
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                maxAge: 7 * 24 * 60 * 60 * 1000 //7 days
+            });
+
+            res.status(200).json({success: true, message: 'Logged In!', data: accessToken});
         }
 
     } catch (err) {
