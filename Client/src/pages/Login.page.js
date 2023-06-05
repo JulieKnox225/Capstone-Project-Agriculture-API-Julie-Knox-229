@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 
-function LoginPage({ token, setToken }) {
+function LoginPage() {
+    const { setToken } = useOutletContext();
     
     const [enabled, setEnabled] = useState(false);
     
@@ -20,9 +21,10 @@ function LoginPage({ token, setToken }) {
     }
 
     const { data, isError, error, isLoading } = useQuery('login', () => fetchLogin(input), { enabled });
-    console.log(data)
+
     if(data) {
         axios.defaults.headers.common['authorization'] = `Bearer ${data.data.data}`;
+        setToken(true);
         return <Navigate to={'/profile'} />;
     }
         

@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import axios from 'axios';
 import PostSnippet from '../components/PostSnippet';
 
-//check if logged in:
-    //true: display saved list
-    //false: display log in menu or create user menu
-
-function ProfilePage({ token, setToken }) {
-    const [enabled, setEnabled] = useState(false);
+function ProfilePage() {
+    const { token } = useOutletContext();
+    const [enabled, setEnabled] = useState(token);
 
     const fetchProfile = () => {
         return axios.get("http://localhost:5000/saved")
@@ -18,11 +15,12 @@ function ProfilePage({ token, setToken }) {
 
     return ( 
         <div>
-            { token === '' && 
+            { !token && 
                 <>
-                    <Link to={'/login'}>Login</Link>
+                    <Link to={'/login'} >Login</Link>
                     <br/>
-                    <Link to={'/user'}>Create User</Link>
+                    <br/>
+                    <Link to={'/user'} >Create User</Link>
                 </>
             }
             { isLoading && <h2>Loading...</h2> }
