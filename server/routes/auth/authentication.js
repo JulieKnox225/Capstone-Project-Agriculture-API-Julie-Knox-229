@@ -58,6 +58,8 @@ router.post('/login', async (req, res) => {
             });
 
             res.status(200).json({success: true, message: 'Logged In!', data: accessToken});
+        } else {
+            return res.status(400).json({success: false, message: 'Wrong password!', data: null});
         }
 
     } catch (err) {

@@ -23,6 +23,20 @@ function AddEntryPage() {
     
     const fetchApi = (input) => {
         setEnabled(false);
+        setInput(
+            {
+                name: '', 
+                nickname: '', 
+                monthsToPlant: '', 
+                sunReq: '',
+                plantingZone: '', 
+                sowTemp: '', 
+                fertilizerNPK: '', 
+                companionPlantId: '', 
+                description: '',
+                avoidPlantId: ''
+            }
+        );
         return axios.post('http://localhost:5000/plants', input);
     }
 
@@ -45,27 +59,10 @@ function AddEntryPage() {
     return ( 
         <div>
             { isLoading && <h2>Loading...</h2>}
-            { isError && <h2>{error.response.data.message.message}</h2>}
-            {/* { data && <h2>{data.data}</h2>} */}
+            { isError && <h2>{error.response.data.message}</h2>}
             <form onSubmit={(e) => {
                     e.preventDefault();
-                    //Unsure if this will work - must try again
                     setEnabled(true);
-                    // if(!isLoading) {
-                    //     setInput(
-                    //         {
-                    //             name: '', 
-                    //             nickname: '', 
-                    //             monthsToPlant: '', 
-                    //             plantingZone: '', 
-                    //             sowTemp: '', 
-                    //             fertilizerNPK: '', 
-                    //             companionPlantId: '', 
-                    //             description: '',
-                    //             avoidPlantId: ''
-                    //         }
-                    //     );
-                    // }
                 }}
             >
                 <input
