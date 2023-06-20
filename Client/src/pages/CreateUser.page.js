@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from 'react-router-dom';
-import axios from "axios";
+import axios from "../api/axios";
 
 function CreateUserPage({ token, setToken }) {
     
@@ -16,7 +16,7 @@ function CreateUserPage({ token, setToken }) {
 
     const fetchCreateUser = (param) => {
         setEnabled(false);
-        return axios.post(`http://localhost:5000/user`, param);
+        return axios.post(`/user`, param, { withCredentials: true });
     }
 
     const { data, isError, error, isLoading } = useQuery('profile', () => fetchCreateUser(input), { enabled });

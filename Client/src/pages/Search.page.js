@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from 'react-query';
-import axios from "axios";
+import axios from "../api/axios";
 import PostSnippet from '../components/PostSnippet';
 
 function SearchPage({ token }) {
@@ -10,7 +10,7 @@ function SearchPage({ token }) {
 
     const fetchAPI = () => {
         setEnabled(false);
-        return axios.get(`http://localhost:5000/plants?search=${input}&type=${type}`);
+        return axios.get(`/plants?search=${input}&type=${type}`);
     }
 
     let { data, isLoading, isError, error } = useQuery('search', fetchAPI, { enabled });

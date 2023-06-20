@@ -1,12 +1,15 @@
 import { useQuery } from "react-query";
 import PostSnippet from "../components/PostSnippet";
-import axios from 'axios';
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import axios from '../api/axios';
 
-const fetchApi = () => {
-    return axios.get('http://localhost:5000/plants');
-}
 
-function HomePage({ token }) {
+function HomePage() {
+    const axiosPrivate = useAxiosPrivate();
+    
+    const fetchApi = () => {
+        return axiosPrivate.get('/plants');
+    }
     const { data, isLoading, isError, error } = useQuery('getPlants', fetchApi, {enabled: true});
 
     return ( 

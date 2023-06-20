@@ -1,21 +1,22 @@
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { Link, useOutletContext } from 'react-router-dom';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import axios from '../api/axios';
 import PostSnippet from '../components/PostSnippet';
 
 function ProfilePage() {
-    const { token } = useOutletContext();
-    const [enabled, setEnabled] = useState(token);
+    const { auth } = useAuth();
+    const [enabled, setEnabled] = useState(auth.accessToken ? false : true);
 
     const fetchProfile = () => {
-        return axios.get("http://localhost:5000/saved")
+        return axios.get("/saved")
     }
     const { data, isError, error, isLoading } = useQuery('profile', fetchProfile, { enabled });
 
     return ( 
         <div>
-            { !token && 
+            { !auth.accessToken && 
                 <>
                     <Link to={'/login'} >Login</Link>
                     <br/>

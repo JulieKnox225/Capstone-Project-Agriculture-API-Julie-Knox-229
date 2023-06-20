@@ -8,6 +8,14 @@ require('dotenv').config();
 const PORT = process.env.PORT;
 
 app.use(cookieParser());
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+
+    if(origin == 'http://localhost:5000') {
+        res.header('Access-Control-Allow-Credentials', true);
+    }
+    next();
+});
 app.use(cors({
     origin: ['http://localhost:5000'],
     credentials: true

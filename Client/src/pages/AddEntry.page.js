@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from 'react-query';
-import axios from 'axios';
+import useAxiosPrivate from '../hooks/useAxiosPrivate'
+import { axiosPrivate } from '../api/axios';
 
 
 function AddEntryPage() {
@@ -21,6 +22,7 @@ function AddEntryPage() {
 
     const [enabled, setEnabled] = useState(false);
     
+    const axiosPrivate = useAxiosPrivate();
     const fetchApi = (input) => {
         setEnabled(false);
         setInput(
@@ -37,7 +39,7 @@ function AddEntryPage() {
                 avoidPlantId: ''
             }
         );
-        return axios.post('http://localhost:5000/plants', input);
+        return axiosPrivate.post('/plants', input);
     }
 
     const { data, isError, isLoading, error } = useQuery('addEntry', () => fetchApi(input),
@@ -59,7 +61,7 @@ function AddEntryPage() {
     return ( 
         <div>
             { isLoading && <h2>Loading...</h2>}
-            { isError && <h2>{error.response.data.message}</h2>}
+            { isError && <h2>{error.response.data.message.message || error.response.data.message}</h2>}
             <form onSubmit={(e) => {
                     e.preventDefault();
                     setEnabled(true);

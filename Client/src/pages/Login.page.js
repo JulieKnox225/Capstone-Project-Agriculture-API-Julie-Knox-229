@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { Link, Navigate, useOutletContext } from 'react-router-dom';
-import axios from 'axios';
+import { Link, Navigate } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
+import axios from '../api/axios';
 
 function LoginPage() {
-    const { setToken } = useOutletContext();
+    const userRef = useRef();
+    const errRef = useRef();
+
+    const { setAuth } = useAuth();
     
     const [enabled, setEnabled] = useState(false);
     
@@ -15,17 +19,20 @@ function LoginPage() {
         }
     );
 
+    useEffect(() => {
+        userRef.current.focus();
+    }, []);
+
     const fetchLogin = (param) => {
         setEnabled(false);
-        return axios.post('http://localhost:5000/login', param, {withCredentials: true});
+        return axios.post('/login', param, { withCredentials: true });
     }
 
     const { data, isError, error, isLoading } = useQuery('login', () => fetchLogin(input), { enabled });
 
     if(data) {
-        axios.defaults.headers.common['authorization'] = `Bearer ${data.data.data}`;
-        setToken(true);
-        return <Navigate to={'/profile'} />;
+        setAuth(prev => ({ ...prev, accessToken: data.data.data}))
+        return <Navigate to={'/'} />;
     }
         
     function handleChange(e) {
@@ -41,24 +48,32 @@ function LoginPage() {
     return (
         <div>
             { isLoading && <h2>Loading...</h2> }
-            { isError && <h2>{error.response.data.message}</h2> }
+            { isError && 
+                <h2 ref={errRef} aria-live="assertive">{error.response.data.message}</h2> 
+            }
             { !data &&
                 <form onSubmit={(e) => {
                     e.preventDefault();
                     setEnabled(true);
                 }}
                 >
+                    <label htmlFor="name">Username:</label>
                     <input
                         type="text"
                         placeholder="Username"
                         name="name"
+                        ref={userRef}
+                        required
                         value={input.name}
                         onChange={handleChange}
                     ></input>
+                    
+                    <label htmlFor="password">Password:</label>
                     <input
                         type="password"
                         placeholder="Password"
                         name="password"
+                        required
                         value={input.password}
                         onChange={handleChange}
                     ></input>
