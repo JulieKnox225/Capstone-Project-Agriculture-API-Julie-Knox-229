@@ -42,7 +42,7 @@ const login = async (req, res) => {
         const { password: hashedPassword } = result[0][0];
 
         if(await bcrypt.compare(sentPassword, hashedPassword)) {
-            const accessToken = jwt.sign({name}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '10m'});
+            const accessToken = jwt.sign({name}, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '30s'});
             const refreshToken = jwt.sign({name}, process.env.REFRESH_TOKEN_SECRET, {expiresIn: '1w'});
 
             res.cookie('refreshToken', refreshToken, {

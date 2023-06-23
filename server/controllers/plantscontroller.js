@@ -1,36 +1,13 @@
 const getPlants = async (req, res) => {
     try {
         const { search, type } = req.query;
+        const wordsToSearchWithLike = ['name', 'nickname', 'months_to_plant', 'sow_temp_range', 'description', 'planting_zone'];
         let result = [];
         if(search) {
-            switch (type) {
-                case 'name':
-                    result = await req.db.query(`SELECT * FROM plants WHERE name LIKE '%${search}%'`);
-                    break;
-                case 'nickname':
-                    result = await req.db.query(`SELECT * FROM plants WHERE nickname LIKE '%${search}%'`);
-                    break;
-                case 'months_to_plant':
-                    result = await req.db.query(`SELECT * FROM plants WHERE months_to_plant LIKE '%${search}%'`);
-                    break;
-                case 'sun_req':
-                    result = await req.db.query(`SELECT * FROM plants WHERE sun_req = :search`, { search });
-                    break;
-                case 'planting_zone':
-                    result = await req.db.query(`SELECT * FROM plants WHERE planting_zone = :search`, { search });
-                    break;
-                case 'sow_temp_range':
-                    result = await req.db.query(`SELECT * FROM plants WHERE sow_temp_range LIKE '%${search}%'`);
-                    break;
-                case 'fertilizer_NPK':
-                    result = await req.db.query(`SELECT * FROM plants WHERE fertilizer_NPK = :search`, { search });
-                    break;
-                case 'description':
-                    result = await req.db.query(`SELECT * FROM plants WHERE description LIKE '%${search}%'`);
-                    break;
-                default:
-                    result = await req.db.query(`SELECT * FROM plants WHERE :type = :search`, { type, search });
-                    break;
+            if(wordsToSearchWithLike.includes(type)) {
+                result = await req.db.query(`SELECT * FROM plants WHERE ${type} LIKE '%${search}%'`);
+            } else {
+                result = await req.db.query(`SELECT * FROM plants WHERE ${type} = :search`, { search });
             }
         }
         else {
@@ -87,7 +64,7 @@ const createPlant = async (req, res) => {
 
 const getSavedPlants = async (req, res) => {
     try {
-        const idResult = await req.db.query(
+        const id = await req.db.query(
             `SELECT id FROM users WHERE name = :name`,
             {
                 name: req.user
@@ -95,9 +72,9 @@ const getSavedPlants = async (req, res) => {
         );
 
         const result = await req.db.query(
-            `SELECT * FROM plants WHERE user_id = :userId`,
+            `SELECT * FROM saved_list WHERE user_id = :userId`,
             {
-                userId: idResult[0][0].id
+                userId: id[0][0].id
             }
         );
 
@@ -107,8 +84,62 @@ const getSavedPlants = async (req, res) => {
     }
 };
 
+const addSavedPlant = async (req, res) => {
+    try {
+        const { plantId } = req.params;
+        const id = await req.db.query(
+            `SELECT id FROM users WHERE name = :name`,
+            {
+                name: req.user
+            }
+        );
+
+        await req.db.query(
+            `INSERT INTO saved_list (user_id, plant_id)
+                VALUES (:id, :plantId)`,
+            {
+                id: id[0][0].id,
+                plantId
+
+            }
+        );
+
+        res.status(200).send({success: true, message: 'Saved plant!', data: null});
+    } catch (error) {
+        res.status(400).send({success: false, message: err || 'Unknown error occurred', data: null});
+    }
+};
+
+const removeSavedPlant = async (req, res) => {
+    try {
+        const { plantId } = req.params;
+
+        const id = await req.db.query(
+            `SELECT id FROM users WHERE name = :name`,
+            {
+                name: req.user
+            }
+        );
+
+        await req.db.query(
+            `DELETE FROM saved_list 
+                WHERE user_id = :id AND plant_id = :plantId`,
+            {
+                id: id[0][0].id,
+                plantId
+            }
+        );
+
+        res.status(200).send({success: true, message: 'Removed saved plant!', data: null});
+    } catch (error) {
+        res.status(400).send({success: false, message: err || 'Unknown error occurred', data: null});
+    }
+}
+
 module.exports = {
     getPlants,
     createPlant,
-    getSavedPlants
+    getSavedPlants,
+    addSavedPlant,
+    removeSavedPlant
 }
